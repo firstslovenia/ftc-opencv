@@ -27,3 +27,6 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+opencv-4.9.0/libs
+opencv-4.9.0/single-archive.zip

@@ -7,14 +7,14 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library" exported="">
+    <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../libs/opencv-4.9.0/build/bin/opencv-490.jar!/" />
+          <root url="jar://$MODULE_DIR$/opencv-4.9.0/libs/opencv-4.9.0/build/bin/opencv-490.jar!/" />
         </CLASSES>
         <JAVADOC />
         <NATIVE>
-          <root url="file://$MODULE_DIR$/../../libs/opencv-4.9.0/build/lib" />
+          <root url="file://$MODULE_DIR$/opencv-4.9.0/libs/opencv-4.9.0/build/lib" />
         </NATIVE>
         <SOURCES />
       </library>
