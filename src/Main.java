@@ -1,98 +1,74 @@
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.Scalar;
 import org.opencv.highgui.HighGui;
 import org.opencv.imgcodecs.Imgcodecs;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicIntegerArray;
 
 public class Main {
-    private static final int COLOR_MAX = 255;
-    private static final int COLOR_THRESHOLD_MAX = 255;
-    private static final int zeroColorArray[] = {0, 0, 0};
-    private static AtomicIntegerArray colorThreshold = new AtomicIntegerArray(zeroColorArray);
+    public static JFrame frame;
+    public static Box sliderBox;
 
-
-    private static final String imagePath = "images/pixels.jpg";
-    private static Mat image;
-    private static JFrame frame;
+    private static Mat imageMat;
     private static JLabel imageLabel;
-    private static int anInt;
+
+    private static Slider colorSliderMinR;
+    private static Slider colorSliderMaxR;
+    private static Slider colorSliderMinG;
+    private static Slider colorSliderMaxG;
+    private static Slider colorSliderMinB;
+    private static Slider colorSliderMaxB;
 
     public static void main(String[] args) throws IOException {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-        image = loadImage(imagePath);
-        showImage(image);
-    }
+        imageMat = loadImage("images/pixels.jpg");
 
-    private static Mat loadImage(String path) {
-        Mat img = Imgcodecs.imread(path);
-        if (img.empty()) {
-            System.out.println("Empty image: " + path);
-            System.exit(0);
-        }
-        System.out.println(img.width() + "x" + img.height());
-        return img;
-    }
 
-    private static void showImage(Mat imageMat) {
         frame = new JFrame("Linear Blend");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        sliderBox = new Box(BoxLayout.Y_AXIS);
+
         Image img = HighGui.toBufferedImage(imageMat);
-        addComponentsToPane(frame.getContentPane(), img, "Colors", new AtomicInteger(colorThreshold.get(0)));
+        imageLabel = new JLabel(new ImageIcon(img));
+        frame.getContentPane().add(imageLabel, BorderLayout.CENTER);
+        frame.getContentPane().add(sliderBox, BorderLayout.NORTH);
+
+        colorSliderMinR = new Slider("Color Slider R min", 0, 255, 100);
+        colorSliderMaxR = new Slider("Color Slider R max", 0, 255, 100);
+        colorSliderMinG = new Slider("Color Slider G min", 0, 255, 100);
+        colorSliderMaxG = new Slider("Color Slider G max", 0, 255, 100);
+        colorSliderMinB = new Slider("Color Slider B min", 0, 255, 100);
+        colorSliderMaxB = new Slider("Color Slider B max", 0, 255, 100);
 
         frame.pack();
         frame.setVisible(true);
     }
 
-    private static void updateImage() {
-        double alpha = colorThreshold.get(0) / (double) COLOR_THRESHOLD_MAX;
-        System.out.println(colorThreshold.get(0));
-        Mat imageMat = new Mat();
-        Core.addWeighted(image, alpha, image, alpha, 0, imageMat);
-        Image img = HighGui.toBufferedImage(imageMat);
-        imageLabel.setIcon(new ImageIcon(img));
-        frame.repaint();
-    }
+    private static Mat loadImage(String path) {
+        Mat img = Imgcodecs.imread(path);
 
-    private static void addComponentsToPane(Container pane, Image img, String title, AtomicInteger toModify) {
-        if (!(pane.getLayout() instanceof BorderLayout)) {
-            pane.add(new JLabel("Container doesn't use BorderLayout!"));
-            return;
+        if (img.empty()) {
+            System.out.println("Empty image: " + path);
+            System.exit(0);
         }
 
-        JPanel sliderPanel = new JPanel();
-        sliderPanel.setLayout(new BoxLayout(sliderPanel, BoxLayout.PAGE_AXIS));
-        sliderPanel.add(new JLabel(title)); // Use the title
+        System.out.println(img.width() + "x" + img.height());
+        return img;
+    }
 
-        // Initialize the slider with the initial value of colorThreshold
-        JSlider slider = new JSlider(0, COLOR_THRESHOLD_MAX, toModify.intValue());
-        slider.setMajorTickSpacing(20);
-        slider.setMinorTickSpacing(5);
-        slider.setPaintTicks(true);
-        slider.setPaintLabels(true);
+    public static void updateImage() {
+        double alpha = (double) colorSliderMinR.getSliderValue() / colorSliderMinR.getMaxValue();
 
-        AtomicInteger temp = new AtomicInteger(0);
-        slider.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                JSlider source = (JSlider) e.getSource();
-                System.out.println("Slider " + source.getValue());
-                toModify.set(source.getValue());
-                System.out.println("Temp " + toModify.intValue());
-                updateImage();
-            }
-        });
+        Mat tempImageMat = new Mat();
 
-        sliderPanel.add(slider);
-        pane.add(sliderPanel, BorderLayout.PAGE_START);
-        imageLabel = new JLabel(new ImageIcon(img));
-        pane.add(imageLabel, BorderLayout.CENTER);
+        //Core.addWeighted(imageMat, alpha, imageMat, alpha, 0, tempImageMat);
+        Core.inRange(imageMat, new Scalar(colorSliderMinR.getSliderValue(),colorSliderMinG.getSliderValue(), colorSliderMinB.getSliderValue()), new Scalar(colorSliderMaxR.getSliderValue(),colorSliderMaxG.getSliderValue(), colorSliderMaxB.getSliderValue()), tempImageMat);
+        Image img = HighGui.toBufferedImage(tempImageMat);
+        imageLabel.setIcon(new ImageIcon(img));
+        frame.repaint();
     }
 }
