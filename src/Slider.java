@@ -12,7 +12,7 @@ public class Slider extends JSlider {
      * @param maxValue Maximalna vrednost
      * @param startValue Začetna vrednost
      */
-    public Slider(String title, int minValue, int maxValue, int startValue) {
+    public Slider (String title, int minValue, int maxValue, int startValue) {
         this.maxValue = maxValue;
 
         JPanel sliderPanel = new JPanel();
@@ -38,6 +38,11 @@ public class Slider extends JSlider {
 
     public int getMaxValue() {
         return maxValue;
+    }
+
+    public void setSliderValue(int newValue) {
+        velju = newValue;
+        this.setValue(newValue);
     }
 
     public int getSliderValue() {
