@@ -15,10 +15,10 @@ public class ImageLoader {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         // Laptop has stupid face id cameras so use this to find correct one
         // For default use 0
-        int index = 5;
+        int index = 3;
         //capture = new VideoCapture(index + CAP_V4L);
         //capture.set(Videoio.CAP_PROP_AUTO_EXPOSURE, -1000.0);
-        /*while (true) {
+        while (true) {
             capture = new VideoCapture(index + CAP_V4L);
             if (capture.isOpened()) {
                 System.out.println("Camera found at index: " + index);
@@ -32,7 +32,7 @@ public class ImageLoader {
                 System.out.println("No external camera found. Please check connection.");
                 break;
             }
-        }*/
+        }
         capture = new VideoCapture(index + CAP_V4L);
     }
 
