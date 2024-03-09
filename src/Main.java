@@ -36,6 +36,7 @@ public class Main {
 
     private static final int ROW_COUNT = 15, COL_COUNT = 20;
     private static int LUM_THRESHOLD = 100;
+    private static int MIN_SURFACE = 3;
     private static Mat[][] imageSegments = new Mat[ROW_COUNT][COL_COUNT];
     private static boolean[][] validImageSegments = new boolean[ROW_COUNT][COL_COUNT];
 
@@ -188,13 +189,18 @@ public class Main {
         }
 
         int pos = 0;
-        if (Math.min(zones[0] + 1, zones[1] + 1) > 1) {
-            pos = (zones[0] / zones[1] > 1)?1:2;
+        if (Math.max(zones[0], zones[1]) > MIN_SURFACE) {
+            if (Math.min(zones[0], zones[1]) == 0)
+                pos = (zones[0] == 0)?2:1;
+            else
+                pos = (zones[0] / (float)zones[1] > 1)?1:2;
         }
 
-        String zoneData = "Ratio  M " + Integer.toString(zones[0]) + "  :  R " + Integer.toString(zones[1]) +
-                "  Zone" + Integer.toString(pos);
-        Imgproc.putText(imageMatFinal, zoneData, new Point(100, 100)  ,Imgproc.FONT_ITALIC, 1, new Scalar(0, 0, 255),2);
+        String zoneData = "RATIO Middle " + Integer.toString(zones[0]) + " : Right   " + Integer.toString(zones[1]);
+        String ratioData = "ZONE " + Integer.toString(pos);
+
+        Imgproc.putText(imageMatFinal, zoneData, new Point(30, 50)  ,Imgproc.FONT_ITALIC, 1, new Scalar(0, 0, 255),2);
+        Imgproc.putText(imageMatFinal, ratioData, new Point(30, 100)  ,Imgproc.FONT_ITALIC, 1, new Scalar(0, 0, 255),2);
 
         Image imageFinal = HighGui.toBufferedImage(imageMatFinal);
 
